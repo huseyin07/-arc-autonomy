@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.85.5",
-    "@circle-fin/developer-controlled-wallets": "^1.2.0",
+    "@circle-fin/developer-controlled-wallets": "^10.8.0",
     "lucide-react": "^0.542.0",
     "next": "^15.5.2",
     "react": "^19.1.1",
