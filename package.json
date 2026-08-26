@@ -14,15 +14,15 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.85.5",
-    "@circle-fin/developer-controlled-wallets": "^1.2.0",
+    "@circle-fin/developer-controlled-wallets": "^10.8.0",
     "lucide-react": "^0.542.0",
     "next": "^15.5.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "postgres": "^3.4.7",
     "server-only": "^0.0.1",
-    "viem": "^2.37.3",
-    "wagmi": "^2.16.9",
+    "viem": "2.37.3",
+    "wagmi": "2.16.9",
     "zod": "^3.25.76"
   },
   "devDependencies": {
