@@ -1,0 +1,1 @@
+export interface PublicAgent {id:string;name:string;description:string;walletAddress:`0x${string}`;blockchain:"ARC-TESTNET";accountType:"SCA"|"EOA";status:"active"|"paused"|"requires_attention";balance:string;dailySpendLimit:string;singleTransactionLimit:string;approvalThreshold:string;createdAt:string;updatedAt:string}
