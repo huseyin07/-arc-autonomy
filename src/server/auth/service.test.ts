@@ -1,0 +1,14 @@
+import { beforeEach, describe, expect, it } from "vitest";
+import { privateKeyToAccount } from "viem/accounts";
+import type { Address } from "viem";
+import { AuthService } from "./service";
+import type { AuthChallengeRecord, ChallengeRepository, UserRecord, UserRepository } from "@/server/domain";
+class Challenges implements ChallengeRepository {items=new Map<string,AuthChallengeRecord>();async create(c:AuthChallengeRecord){this.items.set(c.id,c)}async consume(id:string,address:Address,now:Date){const c=this.items.get(id);if(!c||c.consumedAt||c.walletAddress.toLowerCase()!==address.toLowerCase()||c.expiresAt<=now)return null;c.consumedAt=now;return c}}
+class Users implements UserRepository {async findOrCreateByWallet(walletAddress:Address){return {id:"user-a",walletAddress,createdAt:new Date()} as UserRecord}async findById(){return null}}
+const owner=privateKeyToAccount("0x0123456789012345678901234567890123456789012345678901234567890123");const other=privateKeyToAccount("0x1123456789012345678901234567890123456789012345678901234567890123");
+describe("wallet authentication",()=>{let challenges:Challenges;let now:Date;let service:AuthService;beforeEach(()=>{challenges=new Challenges();now=new Date("2026-01-01T00:00:00Z");service=new AuthService(challenges,new Users(),()=>now)});
+ it("verifies a valid signature",async()=>{const c=await service.createChallenge(owner.address,"localhost");const signature=await owner.signMessage({message:c.message});await expect(service.verify(c.challengeId,owner.address,signature)).resolves.toMatchObject({id:"user-a"})});
+ it("rejects an invalid signature",async()=>{const c=await service.createChallenge(owner.address,"localhost");const signature=await other.signMessage({message:c.message});await expect(service.verify(c.challengeId,owner.address,signature)).rejects.toMatchObject({code:"SIGNATURE_INVALID"})});
+ it("rejects a mismatching address",async()=>{const c=await service.createChallenge(owner.address,"localhost");const signature=await owner.signMessage({message:c.message});await expect(service.verify(c.challengeId,other.address,signature)).rejects.toMatchObject({code:"CHALLENGE_INVALID"})});
+ it("rejects an expired challenge",async()=>{const c=await service.createChallenge(owner.address,"localhost");now=new Date(now.getTime()+6*60_000);const signature=await owner.signMessage({message:c.message});await expect(service.verify(c.challengeId,owner.address,signature)).rejects.toMatchObject({code:"CHALLENGE_INVALID"})});
+ it("rejects replay",async()=>{const c=await service.createChallenge(owner.address,"localhost");const signature=await owner.signMessage({message:c.message});await service.verify(c.challengeId,owner.address,signature);await expect(service.verify(c.challengeId,owner.address,signature)).rejects.toMatchObject({code:"CHALLENGE_INVALID"})})});

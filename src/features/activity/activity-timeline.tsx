@@ -1,0 +1,3 @@
+import { demoActivity } from "@/data/demo";
+import { Status } from "@/components/ui";
+export function ActivityTimeline(){return <div className="panel p-0"><div className="divide-y divide-line">{demoActivity.map(e=><article className="grid gap-3 p-5 sm:grid-cols-[90px_1fr_auto] sm:items-center" key={e.id}><time className="font-mono text-xs text-muted" dateTime={e.timestamp}>{new Date(e.timestamp).toISOString().slice(11,16)} UTC</time><div><h2 className="text-sm">{e.agentName}</h2><p className="mt-1 text-sm text-muted">{e.description}</p></div><Status tone={e.type==="policy_passed"?"ok":e.type==="approval_requested"?"warn":"neutral"}>{e.outcome}</Status></article>)}</div></div>}
