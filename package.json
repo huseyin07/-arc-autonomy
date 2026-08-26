@@ -9,6 +9,7 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "circle:register-entity-secret": "tsx --env-file=.env.local scripts/register-circle-entity-secret.ts",
     "circle:init-wallet-set": "tsx scripts/create-circle-wallet-set.ts",
     "circle:integration": "tsx scripts/circle-integration.ts"
   },
