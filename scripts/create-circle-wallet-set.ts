@@ -1,3 +1,34 @@
 import { initiateDeveloperControlledWalletsClient } from "@circle-fin/developer-controlled-wallets";
 import { AGENT_WALLET_CONFIG } from "@/config/agent-wallet";
-const {CIRCLE_API_KEY,CIRCLE_ENTITY_SECRET}=process.env;if(!CIRCLE_API_KEY||!CIRCLE_ENTITY_SECRET)throw new Error("Set CIRCLE_API_KEY and CIRCLE_ENTITY_SECRET");const client=initiateDeveloperControlledWalletsClient({apiKey:CIRCLE_API_KEY,entitySecret:CIRCLE_ENTITY_SECRET});const response=await client.createWalletSet({name:AGENT_WALLET_CONFIG.walletSetName});const id=response.data?.walletSet?.id;if(!id)throw new Error("Circle did not return a wallet set ID");console.log(`Wallet Set created. Store this server-side as CIRCLE_AGENT_WALLET_SET_ID=${id}`);
+
+async function main() {
+  const { CIRCLE_API_KEY, CIRCLE_ENTITY_SECRET } = process.env;
+
+  if (!CIRCLE_API_KEY || !CIRCLE_ENTITY_SECRET) {
+    throw new Error("Set CIRCLE_API_KEY and CIRCLE_ENTITY_SECRET");
+  }
+
+  const client = initiateDeveloperControlledWalletsClient({
+    apiKey: CIRCLE_API_KEY,
+    entitySecret: CIRCLE_ENTITY_SECRET,
+  });
+
+  const response = await client.createWalletSet({
+    name: AGENT_WALLET_CONFIG.walletSetName,
+  });
+
+  const id = response.data?.walletSet?.id;
+  if (!id) {
+    throw new Error("Circle did not return a wallet set ID");
+  }
+
+  console.log(
+    `Wallet Set created. Store this server-side as CIRCLE_AGENT_WALLET_SET_ID=${id}`,
+  );
+}
+
+main().catch((error) => {
+  const message = error instanceof Error ? error.message : String(error);
+  console.error(`Circle Wallet Set creation failed: ${message}`);
+  process.exit(1);
+});
